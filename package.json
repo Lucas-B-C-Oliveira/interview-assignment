@@ -1,5 +1,5 @@
 {
-  "name": "my-turborepo",
+  "name": "interview-assignment",
   "private": true,
   "scripts": {
     "build": "turbo run build",
