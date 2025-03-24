@@ -50,7 +50,7 @@ Both parts are managed under a monorepo structure using **TurboRepo**.
 ### 1. **Clone the Repository**:
 
 ```bash 
-git clone [<repository-url>](https://github.com/Lucas-B-C-Oliveira/interview-assignment)
+git clone https://github.com/Lucas-B-C-Oliveira/interview-assignment
 cd interview-assignment
 ```
 
