@@ -1,84 +1,163 @@
-# Turborepo starter
+# User Authentication System
 
-This Turborepo starter is maintained by the Turborepo core team.
+This project is a simple implementation of a user authentication system using cookie-based sessions. The system allows users to log in, register an account, access a protected route, and log out securely. This solution leverages JWT for session management, Fastify for the API, and Next.js for the web client, all within a monorepo structure powered by TurboRepo.
 
-## Using this example
+## Project Structure
 
-Run the following command:
+This project is divided into two main parts:
 
-```sh
-npx create-turbo@latest
+1. **Web Client** (`web`):
+   - A Next.js app that handles user interactions, including login, registration, and profile management.
+   - Uses cookies to store the JWT securely for authenticated sessions.
+
+2. **API** (`@assignment/api`):
+   - A Fastify-based server that handles authentication requests, including login, registration, and user profile management.
+   - Uses Prisma for database interaction and bcryptjs for password hashing.
+
+Both parts are managed under a monorepo structure using **TurboRepo**.
+
+## Requirements
+
+### 1. **Login Page (`/login`)**:
+- A login form where users can provide their email and password.
+- Upon successful login, the server sets a session cookie (e.g., `auth_token`) that holds the user's authentication token (JWT).
+- If the login fails, an error message is displayed.
+
+### 2. **Logout Page (`/logout`)**:
+- A route to log the user out by clearing the authentication cookie (e.g., `auth_token`).
+
+### 3. **User Registration (`/register`)**:
+- Users can create a new account by providing a username, email, and password.
+- The password is securely stored on the server after being hashed using `bcryptjs`.
+- After registration, users are redirected to the login page.
+
+### 4. **Protected Page (`/profile`)**:
+- This page is accessible onlNext.jsy to authenticated users.
+- Displays the user’s username or other relevant information (e.g., "Welcome, [username]!").
+- If the user is not authenticated (i.e., no valid authentication cookie), they are redirected to the login page.
+
+## Technologies Used
+
+- **Next.js** for the frontend web client.
+- **Fastify** for the backend API.
+- **JWT** (JSON Web Token) for session management.
+- **Prisma** for database ORM.
+- **bcryptjs** for password hashing.
+- **Docker** and **Docker Compose** for containerization and easy environment setup.
+
+## Setup
+
+### 1. **Clone the Repository**:
+
+```bash 
+git clone <repository-url>
+cd <project-directory>
 ```
 
-## What's inside?
+### 2. **Setup Environment Variables**:
+Copy the .env.example file to .env:
 
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
+```bash 
+cp .env.example .env
 ```
-cd my-turborepo
-pnpm build
+Edit the .env file to match your configuration:
+
+```bash 
+SERVER_PORT=3333
+DATABASE_URL=<your-database-url>
+JWT_SECRET=<your-jwt-secret>
+JWT_ISSUER=<your-jwt-issuer>
+JWT_AUDIENCE=<your-jwt-audience>
+NEXT_PUBLIC_API_URL=<your-api-url>
+```
+Make sure to set the correct values for DATABASE_URL, JWT_SECRET, JWT_ISSUER, JWT_AUDIENCE, and NEXT_PUBLIC_API_URL.
+
+
+### 3. **Run the Development Environment with Docker**:
+Step 1: Start the API
+Navigate to the API directory and install dependencies:
+
+```bash 
+cd api
+pnpm install
 ```
 
-### Develop
+Run Docker Compose to set up the backend and the database containers:
 
-To develop all apps and packages, run the following command:
-
+```bash 
+docker compose up -d
 ```
-cd my-turborepo
+Apply the Prisma migrations to the database:
+
+```bash 
+pnpm db:migrate
+```
+Start the backend API:
+
+```bash 
 pnpm dev
 ```
+The backend API should now be running on http://localhost:3333.
 
-### Remote Caching
+Step 2: Start the Web Client
+Navigate to the web client directory and install dependencies:
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
+```bash 
+cd ../web
+pnpm install
 ```
-cd my-turborepo
-npx turbo login
+Start the Next.js development server:
+
+```bash 
+pnpm dev
 ```
+The web client should now be running on http://localhost:3000.
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+### 4. **API Documentation (Swagger)**:
+The API is documented using Swagger. You can access the interactive API documentation by visiting:
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
+```bash 
+http://localhost:3333/docs
 ```
-npx turbo link
-```
+This provides a detailed view of all available API routes, request/response formats, and allows you to interact with the API directly from the browser.
 
-## Useful Links
+## How It Works
 
-Learn more about the power of Turborepo:
+1. **User Registration**:
+   - The user submits their username, email, and password.
+   - The password is hashed using `bcryptjs` before being stored in the database.
+   - After successful registration, the user is redirected to the login page.
 
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+2. **Login**:
+   - The user provides their email and password.
+   - The password is compared to the stored hash in the database.
+   - If the credentials are valid, a JWT is generated and sent to the client as an `auth_token` cookie.
+
+3. **Protected Profile Page**:
+   - The profile page can only be accessed by users with a valid `auth_token`.
+   - If the user is authenticated, the page displays their username or relevant information.
+   - If the user is not authenticated, they are redirected to the login page.
+
+4. **Logout**:
+   - The user can log out, which clears the authentication cookie and redirects them to the login page.
+
+## Docker Setup
+
+### Docker Compose:
+Docker Compose is used to easily set up the development environment. It builds and runs both the API and the frontend client in isolated containers.
+
+## Project Scripts
+
+### Web Client (`web`):
+- **`dev`**: Starts the Next.js development server.
+- **`build`**: Builds the production version of the web client.
+- **`start`**: Starts the production version of the web client.
+
+### API (`@assignment/api`):
+- **`dev`**: Starts the Fastify server in development mode.
+- **`db:migrate`**: Runs the Prisma migrations.
+- **`db:studio`**: Opens Prisma Studio to interact with the database.
+
+## Conclusion
+
+This project provides a simple, secure user authentication system with JWT-based cookie sessions, offering login, registration, and profile management functionality. It leverages modern web development tools and frameworks like Next.js, Fastify, Prisma, and Docker to provide a scalable and easy-to-maintain solution.

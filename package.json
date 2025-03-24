@@ -1,5 +1,5 @@
 {
-  "name": "interview-assignment",
+  "name": "assignment",
   "private": true,
   "scripts": {
     "build": "turbo run build",
